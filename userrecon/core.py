@@ -2,6 +2,7 @@
 
 from time import time
 
+import pkg_resources
 import asyncio
 import json
 import sys
@@ -57,8 +58,9 @@ async def check_status(session, social_network, username):
 
 
 async def verify_username(username):
-
-    with open("userrecon/web_accounts_list.json", "r") as data_file:
+    
+    filepath = pkg_resources.resource_filename("userrecon", "web_accounts_list.json")
+    with open(filepath, "r") as data_file:
         web_accounts_list = json.load(data_file)
         social_networks = web_accounts_list["sites"]
 
@@ -86,4 +88,4 @@ def generate_json_file(filename):
     output = json.dumps(results, indent=2)
     with open("{}.json".format(filename), "w") as f:
         f.write(output)
-        print("[*] file {} was created".format(filename))
+        print("[*] file {}.json was created".format(filename))

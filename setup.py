@@ -31,6 +31,7 @@ setup(
     scripts             = ['bin/userrecon-py'],
     license             = __license__,
     install_requires    = read_requirements(),
+    package_data = {"userrecon": ["web_accounts_list.json"]},
     classifiers = [
         'Programming Language :: Python3',
         'License :: MIT',
