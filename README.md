@@ -1,5 +1,5 @@
 ## userrecon-py
-Find usernames in social networks.
+Find usernames in **187** social networks.
 
 <p align="center">
     <img alt="userrecon-py" src="https://i.imgur.com/6ms6lIe.gif"/>
@@ -53,15 +53,17 @@ userrecon-py --version
 Start by printing the available actions by running `userrecon-py --help`. Then you can perform the following tests:
 
 ```
-userrecon-py target decoxviii -o test1
+userrecon-py --target decoxviii -o test_one
 ```
 
 ---
 
 #### Thanks
 
-This program is inspired by the projects:
-+ [userrecon](https://github.com/thelinuxchoice/userrecon) by: thelinuxchoice
+This program is possible thanks to:
+
++ [userrecon](https://github.com/thelinuxchoice/userrecon)
++ [WhatsMyName](https://github.com/WebBreacher/WhatsMyName)
 
 ---
 
