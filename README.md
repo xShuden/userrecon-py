@@ -2,7 +2,9 @@
 Find usernames in **187** social networks.
 
 <p align="center">
-    <img alt="userrecon-py" src="https://i.imgur.com/6ms6lIe.gif"/>
+    <a href="https://youtu.be/UcPIV4CgzY0">
+        <img alt="userrecon-py" src="https://i.imgur.com/V5z7A87.png"/>
+    </a>
     <p align="center">
         <a href="https://github.com/decoxviii/userrecon-py/releases/latest"><img alt="Release" src="https://img.shields.io/github/tag/decoxviii/userrecon-py.svg"></a>
         <a href="https://github.com/decoxviii/userrecon-py/blob/master/LICENSE"><img alt="Software License" src="https://img.shields.io/badge/license-MIT-brightgreen.svg"></a>
@@ -55,6 +57,8 @@ Start by printing the available actions by running `userrecon-py --help`. Then y
 ```
 userrecon-py --target decoxviii -o test_one
 ```
+
+Watch this demo [video](https://youtu.be/UcPIV4CgzY0)
 
 ---
 
