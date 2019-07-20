@@ -1,5 +1,5 @@
 ## userrecon-py
-Find usernames in **187** social networks.
+Recognition usernames in **187** social networks.
 
 <p align="center">
     <a href="https://youtu.be/UcPIV4CgzY0">
