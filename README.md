@@ -2,8 +2,8 @@
 Username recognition on various websites.
 
 [![powered by](https://img.shields.io/badge/powered%20by-WhatsMyName-black.svg?style=flat&logo=github)](https://github.com/WebBreacher/WhatsMyName)
-[![demo](https://img.shields.io/badge/youtube-demo-black.svg?style=flat&logo=youtube)](#)
-![websites](https://img.shields.io/badge/websites-193-black.svg?style=flat)
+[![demo](https://img.shields.io/badge/youtube-demo-red.svg?style=flat&logo=youtube)](#)
+![websites](https://img.shields.io/badge/websites-193-green.svg?style=flat)
 
 ---
 
