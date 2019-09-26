@@ -4,8 +4,7 @@ import sys
 import json
 import asyncio
 import pkg_resources
-
-from time import time
+import time
 
 try:
     import aiohttp
@@ -28,7 +27,7 @@ class Userreconpy:
 
     def generate_json_file(self):
 
-        filename = self.args["FILENAME"]
+        filename = f"{self.username}-{time.strftime('%y-%m-%d-%H-%M-%S')}"
         output = json.dumps(self.results, indent=2)
         with open(f"{filename}.json", "w") as f:
             f.write(output)
@@ -104,14 +103,14 @@ class Userreconpy:
 
         username = Style.BRIGHT + self.username + Style.RESET_ALL
 
-        start_time = time()
+        start_time = time.time()
         print(
             f"[*] checking username: {username} in {len(self.websites)} websites\033[J"
         )
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.run())
         loop.close()
-        print(f"[*] results found in: {time() - start_time:0.2f}s\033[J")
+        print(f"[*] results found in: {time.time() - start_time:0.2f}s\033[J")
 
         if self.args["--output"]:
             self.generate_json_file()

@@ -30,7 +30,7 @@ except ModuleNotFoundError as e:
 USAGE = f"""userrecon-py v{__version__}
 
 Usage:
-    userrecon-py target USERNAME (-a | -p | -n) [-o FILENAME]
+    userrecon-py target USERNAME (--all | --positive | --negative) [--output]
 
 Arguments:
     -a, --all       Print all results
