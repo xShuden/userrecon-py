@@ -24,9 +24,20 @@ class Userreconpy:
         self.websites = self.get_websites()
         self.results = {}
 
+    def generate_json_file(self):
+
+        filename = self.args["FILENAME"]
+        output = json.dumps(self.results, indent=2)
+        with open(f"{filename}.json", "w") as f:
+            f.write(output)
+
+        print(f"[*] file {filename}.json was created\033[J")
+
     def get_websites(self) -> list:
 
-        filepath = pkg_resources.resource_filename("userreconpy", "web_accounts_list.json")
+        filepath = pkg_resources.resource_filename(
+            "userreconpy", "web_accounts_list.json"
+        )
         with open(filepath, encoding="utf8") as website_list:
             return json.load(website_list)["sites"]
 
@@ -39,16 +50,17 @@ class Userreconpy:
         content = await response.content.read()
         content = str(content)
 
-
         def print_positive_results():
             if response.status == 200 and account_existence_string in content:
-                    print(f"{Fore.GREEN}[+] {name}: {url}{Fore.RESET}\033[J")
+                print(f"{Fore.GREEN}[+] {name}: {url}{Fore.RESET}\033[J")
+                self.results[name] = url
             else:
                 print(f"[-] {name}: {url}\033[J", end="\r")
 
         def print_negative_results():
             if not response.status == 200 or not account_existence_string in content:
                 print(f"{Fore.YELLOW}[-] {name}: {url}{Fore.RESET}\033[J")
+                self.results[name] = url
             else:
                 print(f"[+] {name}: {url}\033[J", end="\r")
 
@@ -57,6 +69,8 @@ class Userreconpy:
                 print(f"{Fore.GREEN}[+] {name}: {url}{Fore.RESET}")
             else:
                 print(f"{Fore.YELLOW}[-] {name}: {url}{Fore.RESET}")
+            
+            self.results[name] = url
 
         switch = {
             "--all": print_all_results,
@@ -75,7 +89,7 @@ class Userreconpy:
             async with session.get(url) as response:
                 await self.check_response(response, web)
         except Exception as e:
-            print(f"{Fore.RED}[x] {url} -> {e}{Fore.RESET}\033[J")
+            #print(f"{Fore.RED}[x] {url} -> {e}{Fore.RESET}\033[J")
             pass
 
     async def run(self):
@@ -87,6 +101,9 @@ class Userreconpy:
     def main(self):
 
         username = Style.BRIGHT + self.username + Style.RESET_ALL
-        print(f"[*] checking username: {username} in {len(self.websites)} websites")
+        print(f"[*] checking username: {username} in {len(self.websites)} websites\033[J")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.run())
+
+        if self.args["--output"]:
+            self.generate_json_file()
