@@ -69,7 +69,7 @@ class Userreconpy:
                 print(f"{Fore.GREEN}[+] {name}: {url}{Fore.RESET}")
             else:
                 print(f"{Fore.YELLOW}[-] {name}: {url}{Fore.RESET}")
-            
+
             self.results[name] = url
 
         switch = {
@@ -86,10 +86,10 @@ class Userreconpy:
 
         url = web["check_uri"].format(account=self.username)
         try:
-            async with session.get(url) as response:
+            async with session.get(url, timeout=120) as response:
                 await self.check_response(response, web)
         except Exception as e:
-            #print(f"{Fore.RED}[x] {url} -> {e}{Fore.RESET}\033[J")
+            print(f"{Fore.RED}[x] {url}{Fore.RESET}\033[J")
             pass
 
     async def run(self):
@@ -101,7 +101,9 @@ class Userreconpy:
     def main(self):
 
         username = Style.BRIGHT + self.username + Style.RESET_ALL
-        print(f"[*] checking username: {username} in {len(self.websites)} websites\033[J")
+        print(
+            f"[*] checking username: {username} in {len(self.websites)} websites\033[J"
+        )
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.run())
 
