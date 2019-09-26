@@ -12,7 +12,7 @@ Username recognition on various websites.
 #### With `pip3`
 ```bash
 # Linux
-sudo -H pip3 install git+https://github.com/decoxviii/userrecon-py.git
+sudo -H pip3 install git+https://github.com/decoxviii/userrecon-py.git --upgrade
 userrecon-py --help
 ```
 
