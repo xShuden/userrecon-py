@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 from setuptools import setup, find_packages
-from userreconpy.version import __version__, __author__, __email__, __license__
-
+from userreconpy import __version__
 import os
 
 try:
@@ -26,12 +25,12 @@ setup(
     version=__version__,
     description="Find usernames in social networks.",
     long_description=long_description,
-    author=__author__,
-    author_email=__email__,
+    author="decoxviii",
+    author_email="decoxviii@gmail.com",
     url="https://github.com/decoxviii/userrecon-py",
     packages=find_packages(),
     scripts=["bin/userrecon-py"],
-    license=__license__,
+    license="MIT",
     install_requires=read_requirements(),
     package_data={"userreconpy": ["web_accounts_list.json"]},
     classifiers=[
