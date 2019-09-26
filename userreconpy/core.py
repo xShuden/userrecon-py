@@ -1,120 +1,92 @@
 #!/usr/bin/env python3
 
+import sys
+import json
+import asyncio
+import pkg_resources
+
 try:
-    from userreconpy.version import __version__, __author__
-    from time import time
-
-    import pkg_resources
-    import asyncio
-    import json
-    import sys
-
-    # requirements.txt
-    from colorama import init, Fore, Style
     import aiohttp
+    from colorama import init, Fore, Style
 
 except ModuleNotFoundError as e:
-    print("[-] error: {}".format(e))
+    print(f"[-] error: {e}")
+    print(
+        "[!] please install the requirements: $ sudo -H pip3 install -r requirements.txt"
+    )
     sys.exit(1)
 
-# colorama
-init()
 
-RESULTS = {}
+class Userreconpy:
+    def __init__(self, args):
+        self.args = args
+        self.username = self.args["USERNAME"]
+        self.websites = self.get_websites()
+        self.results = {}
 
+    def get_websites(self) -> list:
 
-def print_sexy_banner():
-    print(
-        """                                                                    
-  __  __________  _____________  _________  ____        ____  __  __
- / / / / ___/ _ \\/ ___/ ___/ _ \\/ ___/ __ \\/ __ \\______/ __ \\/ / / /
-/ /_/ (__  )  __/ /  / /  /  __/ /__/ /_/ / / / /_____/ /_/ / /_/ / 
-\\__,_/____/\\___/_/  /_/   \\___/\\___/\\____/_/ /_/     / .___/\\__, /  
-       {}Version: {} | Author: {}{}           /_/    /____/   
-""".format(
-            Fore.GREEN, __version__, __author__, Fore.RESET
-        )
-    )
+        filepath = pkg_resources.resource_filename("userreconpy", "web_accounts_list.json")
+        with open(filepath, encoding="utf8") as website_list:
+            return json.load(website_list)["sites"]
 
+    async def check_response(self, response, web: dict):
 
-def generate_json_file(filename):
-    """ generate JSON file with output
-    """
+        url = web["check_uri"].format(account=self.username)
+        account_existence_string = web["account_existence_string"]
+        name = web["name"]
 
-    output = json.dumps(RESULTS, indent=2)
-    with open("{}.json".format(filename), "w") as f:
-        f.write(output)
-
-    print("[*] file {}.json was created".format(filename))
+        content = await response.content.read()
+        content = str(content)
 
 
-async def check_username_exists(session, social_network, username):
-    """Check if the username exists
-    """
+        def print_positive_results():
+            if response.status == 200 and account_existence_string in content:
+                    print(f"{Fore.GREEN}[+] {name}: {url}{Fore.RESET}\033[J")
+            else:
+                print(f"[-] {name}: {url}\033[J", end="\r")
 
-    account_existence_string = social_network["account_existence_string"]
-    url = social_network["check_uri"].format(account=username)
-    name = social_network["name"]
+        def print_negative_results():
+            if not response.status == 200 or not account_existence_string in content:
+                print(f"{Fore.YELLOW}[-] {name}: {url}{Fore.RESET}\033[J")
+            else:
+                print(f"[+] {name}: {url}\033[J", end="\r")
 
-    try:
-        async with session.get(url) as resp:
-            print(
-                "{}[!] {:10}: {}{}\033[J".format(Fore.YELLOW, name, url, Fore.RESET),
-                end="\r",
-            )
+        def print_all_results():
+            if response.status == 200 and account_existence_string in content:
+                print(f"{Fore.GREEN}[+] {name}: {url}{Fore.RESET}")
+            else:
+                print(f"{Fore.YELLOW}[-] {name}: {url}{Fore.RESET}")
 
-            text = await resp.text()
-            if resp.status == 200 and account_existence_string in text:
-                print(
-                    "{}[+] {} : {}{}\033[J".format(
-                        Fore.GREEN, social_network["name"], url, Fore.RESET
-                    )
-                )
+        switch = {
+            "--all": print_all_results,
+            "--positive": print_positive_results,
+            "--negative": print_negative_results,
+        }
 
-                RESULTS[social_network["name"]] = url
+        for key, value in self.args.items():
+            if value and key in switch:
+                switch[key]()
 
-        return resp.release()
+    async def fetch(self, session, web: dict):
 
-    except:
-        pass
+        url = web["check_uri"].format(account=self.username)
+        try:
+            async with session.get(url) as response:
+                await self.check_response(response, web)
+        except Exception as e:
+            print(f"{Fore.RED}[x] {url} -> {e}{Fore.RESET}\033[J")
+            pass
 
+    async def run(self):
 
-def get_social_networks_list():
-    """ Get the social networks list
-    """
+        connector = aiohttp.TCPConnector()
+        async with aiohttp.ClientSession(connector=connector) as session:
+            await asyncio.gather(*[self.fetch(session, web) for web in self.websites])
 
-    filepath = pkg_resources.resource_filename("userreconpy", "web_accounts_list.json")
+    def main(self):
 
-    with open(filepath, "r") as data_file:
-        web_accounts_list = json.load(data_file)
-        social_networks = web_accounts_list["sites"]
-
-    return social_networks
-
-
-async def checking_username(username: str):
-    """Check the username on all social networks
-    """
-
-    social_networks = get_social_networks_list()
-
-    print(
-        "[*] checking username {}{}{} in {} social networks".format(
-            Style.BRIGHT, username, Style.RESET_ALL, len(social_networks)
-        )
-    )
-
-    start = time()
-    async with aiohttp.ClientSession() as session:
-        tasks = [
-            check_username_exists(session, social_network, username)
-            for social_network in social_networks
-        ]
-        await asyncio.gather(*tasks)
-
-        print(
-            "[*] {}{}{} results found in: {:.2f}s.\033[J".format(
-                Style.BRIGHT, len(RESULTS.keys()), Style.RESET_ALL, time() - start
-            )
-        )
-
+        username = Style.BRIGHT + self.username + Style.RESET_ALL
+        print(f"[*] checking username: {username} in {len(self.websites)} websites")
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.run())

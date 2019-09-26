@@ -1,48 +1,55 @@
 #!/usr/bin/env python3
 
-try:
-    from argparse import ArgumentParser
-    from os import path
-    import asyncio
-    import sys
+import sys
+from pathlib import Path
+from time import time
 
-    sys.path.insert(0, path.abspath(path.join(path.dirname(__file__), "..")))
-    from userreconpy.version import __version__
+
+try:
+    from docopt import docopt
+
+except ModuleNotFoundError as e:
+    print(f"[-] error: {e}")
+    print(
+        "[!] please install the requirements: $ sudo -H pip3 install -r requirements.txt"
+    )
+    sys.exit(1)
+
+try:
+    path = str(Path(__file__).resolve().parents[1])
+    sys.path.insert(0, path)
+
+    from userreconpy import __version__
+    from userreconpy import banner
     from userreconpy import core
 
 except ModuleNotFoundError as e:
-    print("[-] error: {}".format(e))
+    print(f"[-] error: {e}")
     sys.exit(1)
 
 
-def main(args):
+USAGE = f"""userrecon-py v{__version__}
 
-    core.print_sexy_banner()
-    username = args.username
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(core.checking_username(username))
+Usage:
+    userrecon-py target USERNAME (-a | -p | -n) [-o FILENAME]
 
-    if args.output:
-        filename = args.output
-        core.generate_json_file(filename)
+Arguments:
+    -a, --all       Print all results
+    -p, --positive  Print positive results
+    -n, --negative  Print negative results
+
+Options:
+    -o, --output    Save output in JSON format.
+    -h, --help      Show this screen.
+    --version       Show version.
+"""
 
 
 if __name__ == "__main__":
 
-    ap = ArgumentParser()
-    ap.add_argument(
-        "--target",
-        metavar=("USERNAME"),
-        dest="username",
-        type=str,
-        help="set username target.",
-    )
-    ap.add_argument(
-        "-o", metavar=("FILENAME"), dest="output", help="save output in JSON format."
-    )
-    ap.add_argument(
-        "--version", "-v", action="version", version="%(prog)s " + __version__
-    )
-
-    args = ap.parse_args()
-    main(args)
+    start_time = time()
+    args = docopt(USAGE, version=f"userrecon-py v{__version__}")
+    banner.print_banner(__version__)
+    app = core.Userreconpy(args)
+    app.main()
+    print(f"[*] results found in: {time() - start_time:0.2f}s\033[J")
