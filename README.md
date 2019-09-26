@@ -1,9 +1,51 @@
-## userrecon-py
+# userrecon-py
 Username recognition on various websites.
+
+[![powered by](https://img.shields.io/badge/powered%20by-WhatsMyName-black.svg?style=flat&logo=github)](https://github.com/WebBreacher/WhatsMyName)
+[![demo](https://img.shields.io/badge/vimeo-demo-black.svg?style=flat&logo=vimeo)](#)
+![websites](https://img.shields.io/badge/websites-193-green.svg?style=flat)
+
+---
+
+## Installation
+
+#### With `pip3`
+```bash
+# Linux
+sudo -H pip3 install git+https://github.com/decoxviii/userrecon-py.git
+userrecon-py --help
+```
+
+#### Build from source
+```bash
+# Linux
+git clone https://github.com/decoxviii/userrecon-py.git ; cd userrecon-py
+sudo -H pip3 install -r requirements.txt
+python3 setup.py build
+sudo python3 setup.py install
+```
+---
+
+## Usage
+Start by printing the available actions by running `userrecon-py --help`. Then you can perform the following tests:
+```bash
+# print all results.
+userrecon-py target decoxviii --all -o test
+
+
+# print positive results.
+userrecon-py target decoxviii --positive -o test
+
+
+# print negative results.
+userrecon-py target decoxviii --negative  -o test
+```
 
 ---
 
 **decoxviii**
 
 **[MIT](https://github.com/decoxviii/userrecon-py/blob/master/LICENSE)**
+
+
 
