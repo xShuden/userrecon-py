@@ -5,6 +5,8 @@ import json
 import asyncio
 import pkg_resources
 
+from time import time
+
 try:
     import aiohttp
     from colorama import init, Fore, Style
@@ -53,24 +55,24 @@ class Userreconpy:
         def print_positive_results():
             if response.status == 200 and account_existence_string in content:
                 print(f"{Fore.GREEN}[+] {name}: {url}{Fore.RESET}\033[J")
-                self.results[name] = url
+                self.results[name] = {"status":"positive", "url":url}
             else:
                 print(f"[-] {name}: {url}\033[J", end="\r")
 
         def print_negative_results():
             if not response.status == 200 or not account_existence_string in content:
                 print(f"{Fore.YELLOW}[-] {name}: {url}{Fore.RESET}\033[J")
-                self.results[name] = url
+                self.results[name] = {"status":"negative", "url":url}
             else:
                 print(f"[+] {name}: {url}\033[J", end="\r")
 
         def print_all_results():
             if response.status == 200 and account_existence_string in content:
                 print(f"{Fore.GREEN}[+] {name}: {url}{Fore.RESET}")
+                self.results[name] = {"status":"positive", "url":url}
             else:
                 print(f"{Fore.YELLOW}[-] {name}: {url}{Fore.RESET}")
-
-            self.results[name] = url
+                self.results[name] = {"status":"negative", "url":url}
 
         switch = {
             "--all": print_all_results,
@@ -101,11 +103,15 @@ class Userreconpy:
     def main(self):
 
         username = Style.BRIGHT + self.username + Style.RESET_ALL
+
+        start_time = time()
         print(
             f"[*] checking username: {username} in {len(self.websites)} websites\033[J"
         )
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.run())
+        loop.close()
+        print(f"[*] results found in: {time() - start_time:0.2f}s\033[J")
 
         if self.args["--output"]:
             self.generate_json_file()

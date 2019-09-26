@@ -2,7 +2,6 @@
 
 import sys
 from pathlib import Path
-from time import time
 
 
 try:
@@ -47,9 +46,7 @@ Options:
 
 if __name__ == "__main__":
 
-    start_time = time()
     args = docopt(USAGE, version=f"userrecon-py v{__version__}")
     banner.print_banner(__version__)
     app = core.Userreconpy(args)
     app.main()
-    print(f"[*] results found in: {time() - start_time:0.2f}s\033[J")
