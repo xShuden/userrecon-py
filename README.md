@@ -27,6 +27,16 @@ sudo python3 setup.py install
 ```
 ---
 
+## Docker Build
+```
+docker run -t xshuden/userrecon-py .
+```
+
+## Docker Run
+```
+docker run --rm -it xshuden/userrecon-py
+```
+
 ## Usage
 Start by printing the available actions by running `userrecon-py --help`. Then you can perform the following tests:
 ```bash
