@@ -29,7 +29,8 @@ sudo python3 setup.py install
 
 ## Docker Build
 ```
-docker run -t xshuden/userrecon-py .
+docker build -t <IMAGE NAME> .
+docker build -t xshuden/userrecon-py .
 ```
 
 ## Docker Run
